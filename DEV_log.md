@@ -10,3 +10,20 @@
 
 ### PS
 * TBH this have been starting from last year DEC, anyways, forgot to build a github repository at the time, and my git push update failed for several time. So I'll be catching up when I got my enviorment.
+
+## Date: [2026-01-12]
+
+### 1. Task Description
+* Objective: Finalize hardware-to-software bridge and map student UID to the local database.
+* Scope: Environment alignment, driver troubleshooting, and initial data capture.
+
+### 2. Implementation Status
+* Progress: 
+    * Captured Test NFC UID: `1D 69 BC A4 19 10 80`.
+    * Localized environment via `.venv` on D: drive to fix pathing conflicts.
+    * Resolved hardware error `0x8010001D` by starting the Windows Smart Card service.
+    * Cleaned up Git repo using `.gitignore` to exclude environment files.
+* Blockers: None. System is ready for logic development.
+
+### PS
+* Big win today—hardware is finally talking to the code. After planning this since last December, seeing that UID pop up in the terminal makes the environment troubleshooting worth it. Next up: Public web integration. I also found myself learning a lot, building venv, using gitignore developing and disscusing with AI had help me push through and learn a lot./happy new year btw(mayb a bit too late)
