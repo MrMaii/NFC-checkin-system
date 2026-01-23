@@ -3,17 +3,22 @@ import sqlite3
 def setup_database():
     conn = sqlite3.connect('dormitory.db')
     c = conn.cursor()
-    # 创建学生表
-    c.execute('''CREATE TABLE IF NOT EXISTS students 
-                 (uid TEXT PRIMARY KEY, name TEXT, room TEXT, grade TEXT)''')
     
-    # 录入预设数据
-    # 注意：'PENDING' 稍后需替换为真实 UID
-    c.execute("INSERT OR REPLACE INTO students VALUES ('PENDING', 'Thomas', '218', 'Grade 11')")
+    # 1. 创建表
+    c.execute('''CREATE TABLE IF NOT EXISTS students 
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  name TEXT, 
+                  uid TEXT UNIQUE, 
+                  status INTEGER DEFAULT 0)''')
+
+    # 2. 插入或更新数据 
+    # 使用 INSERT OR REPLACE 确保如果 UID 变了也能更新
+    target_uid = "1D 69 BC A4 19 10 80"
+    c.execute("INSERT OR REPLACE INTO students (id, name, uid) VALUES (1, 'Thomas', ?)", (target_uid,))
     
     conn.commit()
     conn.close()
-    print("Database 'dormitory.db' initialized successfully.")
+    print("Database synced: Thomas is now registered.")
 
 if __name__ == "__main__":
     setup_database()
