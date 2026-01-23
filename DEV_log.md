@@ -42,3 +42,19 @@
     * USB Host shield piece: Connect my NFC omnikey to arduino
     * PN532 NFC: as a risk backup option in case any thing broke out
 * Developing DEMO will continue when I have time, I'm still back in China right know so I guess I'll need to buy product I need first since it's cheaper in china
+
+## Date: [2026-01-23]
+
+### 1. Task Description
+* Objective: Map physical NFC swipes to automatic database status toggling.
+* Scope: Driver repair, UID-to-student synchronization, and logic closure.
+
+### 2. Implementation Status
+* Progress: 
+    * Fixed `pyscard` `ImportError` by performing a clean reinstall within the local `.venv`.
+    * Synchronized physical UID `1D 69 BC A4 19 10 80` to "Thomas" via `INSERT OR REPLACE` in `init_db.py`.
+    * Achieved Logic Closure: Card swipes now successfully flip status (0/1) and generate real-time attendance logs.
+* Blockers: None. Currently optimizing debounce timing for better hardware responsiveness.
+
+### PS
+* Today was a turning point. The system's "brain" is now fully functional, responding correctly to physical triggers.
