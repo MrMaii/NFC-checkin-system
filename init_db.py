@@ -13,8 +13,8 @@ def setup_database():
 
     # 2. 插入或更新数据 
     # 使用 INSERT OR REPLACE 确保如果 UID 变了也能更新
-    target_uid = "1D 69 BC A4 19 10 80"
-    c.execute("INSERT OR REPLACE INTO students (id, name, uid) VALUES (1, 'Thomas', ?)", (target_uid,))
+    target_uid = "5A E5 C6 CE 05 41 89"
+    c.execute("INSERT OR REPLACE INTO students (id, name, uid) VALUES (1, 'Fangjia', ?)", (target_uid,))
     
     conn.commit()
     conn.close()

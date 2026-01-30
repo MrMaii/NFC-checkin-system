@@ -58,3 +58,9 @@
 
 ### PS
 * Today was a turning point. The system's "brain" is now fully functional, responding correctly to physical triggers.
+
+## Date: [2026-01-23]
+
+### 1. Work Done
+* Based on the HTTP POST principle, it connects the hardware-side code and the web backend, standardizes the interface, and confirms subsequent content. A frontend interface is also provided.
+
