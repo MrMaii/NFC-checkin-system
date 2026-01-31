@@ -1,24 +1,21 @@
+# 修改后的 init_db.py
 import sqlite3
 
-def setup_database():
+def init():
     conn = sqlite3.connect('dormitory.db')
     c = conn.cursor()
-    
-    # 1. 创建表
-    c.execute('''CREATE TABLE IF NOT EXISTS students 
-                 (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                  name TEXT, 
-                  uid TEXT UNIQUE, 
-                  status INTEGER DEFAULT 0)''')
-
-    # 2. 插入或更新数据 
-    # 使用 INSERT OR REPLACE 确保如果 UID 变了也能更新
-    target_uid = "5A E5 C6 CE 05 41 89"
-    c.execute("INSERT OR REPLACE INTO students (id, name, uid) VALUES (1, 'Fangjia', ?)", (target_uid,))
-    
+    # 增加 room (房号) 字段
+    # 增加 timestamp (最后活动时间) 字段，方便统计
+    c.execute('''CREATE TABLE IF NOT EXISTS students
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  name TEXT,
+                  uid TEXT UNIQUE,
+                  room TEXT,
+                  status INTEGER,
+                  last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     conn.close()
-    print("Database synced: Thomas is now registered.")
+    print(">>> 数据库地基已建好：支持姓名、UID、房号和自动时间戳。")
 
 if __name__ == "__main__":
-    setup_database()
+    init()
