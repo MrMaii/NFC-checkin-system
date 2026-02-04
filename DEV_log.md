@@ -68,3 +68,8 @@
 
 ### 1. Work Done
 * Create and upgrade system to multi-user
+
+## Date: [2026-02-04]
+
+### 1. Work Done
+* Put the website on online server

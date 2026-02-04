@@ -1,21 +1,19 @@
-# 修改后的 init_db.py
 import sqlite3
 
 def init():
     conn = sqlite3.connect('dormitory.db')
     c = conn.cursor()
-    # 增加 room (房号) 字段
-    # 增加 timestamp (最后活动时间) 字段，方便统计
     c.execute('''CREATE TABLE IF NOT EXISTS students
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
                   name TEXT,
                   uid TEXT UNIQUE,
                   room TEXT,
-                  status INTEGER,
-                  last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+                  email TEXT,
+                  status INTEGER DEFAULT 0,
+                  last_update TEXT DEFAULT '尚未刷卡')''') # 新增这一列
     conn.commit()
     conn.close()
-    print(">>> 数据库地基已建好：支持姓名、UID、房号和自动时间戳。")
+    print(">>> 数据库已升级：支持存储后端生成的时间戳。")
 
 if __name__ == "__main__":
     init()

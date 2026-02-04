@@ -1,23 +1,25 @@
-# 新建文件: register.py
-import sqlite3
+import requests
 from smartcard.System import readers
 from smartcard.util import toHexString
 
-def interactive_register():
-    conn = sqlite3.connect('dormitory.db')
-    c = conn.cursor()
-    
-    # 确保表里有 room 字段 (如果之前没有，这里会增加)
-    try:
-        c.execute("ALTER TABLE students ADD COLUMN room TEXT")
-    except:
-        pass # 如果已经有了就跳过
+# ------------------ 树莓派 / 任意终端 注册脚本 ------------------
+# 读卡 + 人工输入信息，然后把数据发到服务器，由服务器写入 dormitory.db
 
-    print(">>> 交互式学生注册系统已启动")
-    print(">>> 请将新的 NFC 卡片放置在读卡器上...")
+# 示例：API_BASE = "http://123.123.123.123:5000"
+API_BASE = "http://112.126.57.41:5000" # 部署到树莓派时改成你的服务器地址
+
+API_REGISTER_URL = f"{API_BASE}/register_student"
+API_KEY = "THOMAS_2026"
+
+
+def interactive_register():
+    print(">>> 请刷入新同学的 NFC 卡片（读卡器需连接在本机/树莓派上）...")
 
     r = readers()
-    if len(r) == 0: return print("未找到读卡器")
+    if not r:
+        print("未发现读卡器，请检查 USB 连接。")
+        return
+
     reader = r[0]
 
     while True:
@@ -27,27 +29,49 @@ def interactive_register():
             GET_UID = [0xFF, 0xCA, 0x00, 0x00, 0x00]
             data, _, _ = connection.transmit(GET_UID)
             uid = toHexString(data)
-            
-            # 检查是否已存在
-            c.execute("SELECT name FROM students WHERE uid = ?", (uid,))
-            existing = c.fetchone()
-            if existing:
-                print(f"警告：该卡片已被 {existing[0]} 注册。")
+
+            print(f"\n[卡片识别成功] UID: {uid}")
+            name = input("请输入学生姓名: ").strip()
+            room = input("请输入房间号 (如 302): ").strip()
+            email = input("请输入邮箱账号: ").strip()
+
+            if not all([name, room, email]):
+                print("!!! 有必填项为空，请重新刷卡并输入。")
                 continue
 
-            print(f"\n[检测到新卡片] UID: {uid}")
-            name = input("请输入学生姓名: ")
-            room = input("请输入房间号: ")
+            payload = {
+                "name": name,
+                "uid": uid,
+                "room": room,
+                "email": email,
+            }
+            headers = {"X-API-KEY": API_KEY}
 
-            # 写入数据库
-            c.execute("INSERT INTO students (name, uid, room, status) VALUES (?, ?, ?, 0)", 
-                      (name, uid, room))
-            conn.commit()
-            print(f"成功！学生 {name} (房间 {room}) 已存入数据库。")
-            print("\n等待下一张卡片...")
-            
-        except Exception as e:
-            pass # 循环等待刷卡
+            try:
+                resp = requests.post(
+                    API_REGISTER_URL, json=payload, headers=headers, timeout=5
+                )
+            except Exception as e:
+                print(f"!!! [网络错误] 无法连接服务器: {e}")
+                continue
+
+            if resp.status_code == 201:
+                print(f"成功注册：{name} | 房间：{room} | 邮箱：{email}")
+                break
+            elif resp.status_code == 409:
+                print("!!! 该 UID 已存在，请勿重复注册（可以直接刷卡测试出入）。")
+                break
+            elif resp.status_code == 401:
+                print("!!! 鉴权失败，请检查 API_KEY 是否与服务器一致。")
+                break
+            else:
+                print(f"!!! 服务器返回错误: {resp.status_code} | {resp.text}")
+                break
+
+        except Exception:
+            # 多半是读卡过程中的错误/卡片移开，继续等待下一次
+            continue
+
 
 if __name__ == "__main__":
     interactive_register()

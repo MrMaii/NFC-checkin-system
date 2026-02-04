@@ -1,3 +1,19 @@
+# Python 虚拟环境 & 缓存
 .venv/
+venv/
 __pycache__/
 *.pyc
+
+# Node / 前端依赖 & 打包产物
+node_modules/
+my-dashboard/node_modules/
+my-dashboard/dist/
+dist/
+build/
+
+# 数据库 / 本地数据
+dormitory.db
+
+# 各类本地配置 / 密钥（如果以后有）
+.env
+*.log
